@@ -3,13 +3,16 @@ package main
 import (
 	"fmt"
 	"io"
+	"log"
 	"net/http"
+	"sync"
 
 	"golang.org/x/net/websocket"
 )
 
 type Server struct {
 	conns map[*websocket.Conn]bool
+	mutex sync.RWMutex
 }
 
 func NewServer() *Server {
@@ -21,7 +24,17 @@ func NewServer() *Server {
 func (s *Server) handleWS(ws *websocket.Conn) {
 	fmt.Printf("new connection: %v", ws.RemoteAddr())
 
+	defer func() {
+		s.mutex.Lock()
+		delete(s.conns, ws)
+		s.mutex.Unlock()
+		log.Printf("connection closed: %v", ws.RemoteAddr())
+	}()
+
+	s.mutex.Lock()
 	s.conns[ws] = true
+	s.mutex.Unlock()
+
 	s.readLoop(ws)
 }
 
@@ -40,7 +53,23 @@ func (s *Server) readLoop(ws *websocket.Conn) {
 		msg := buf[:n]
 		fmt.Println(string(msg))
 
-		ws.Write([]byte("thank you for the msg"))
+		if _, err := ws.Write([]byte("Echo: " + string(msg))); err != nil {
+			log.Printf("write error: %v", err)
+			break
+		}
+
+		s.broadcast([]byte(fmt.Sprintf("Broadcast: %s", msg)))
+	}
+}
+
+func (s *Server) broadcast(msg []byte) {
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
+
+	for conn := range s.conns {
+		if _, err := conn.Write(msg); err != nil {
+			log.Printf("Broadcast error to %v: %v", conn.RemoteAddr(), err)
+		}
 	}
 }
 
