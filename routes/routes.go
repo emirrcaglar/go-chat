@@ -21,6 +21,7 @@ func NewHandler() *Handler {
 func (h *Handler) RegisterRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("GET /", h.index)
 	mux.HandleFunc("GET /rooms/{id}", h.viewRoomHandler)
-	mux.HandleFunc("POST /create-room", h.createRoomHandler)
 	mux.HandleFunc("GET /rooms/new", h.newRoomFormHandler)
+
+	mux.HandleFunc("POST /create-room", h.createRoomHandler)
 }

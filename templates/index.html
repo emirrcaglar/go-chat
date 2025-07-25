@@ -6,10 +6,26 @@
     <title>{{.PageTitle}}</title>
 </head>
 <body>
-    <p> This is a chat app. </p>
+    <center>
+        <h1>{{.PageTitle}}</h1>
 
-    <form action="/create-room" method="POST">
-        <button type="submit">New Room</button>
-    </form>
+        <!-- Create Room button -->
+        <div style="margin-top: 20px;">
+            <form action="/create-room" method="POST">
+                <button type="submit">Create New Room</button>
+            </form>
+        </div>
+
+        <!-- Room buttons container -->
+        <div>
+            {{range $id, $room := .Rooms}}
+            <a href="/rooms/{{$id}}">
+                <button>Room {{$room.RoomIndex}}</button>
+            </a>
+            {{else}}
+            <p>No rooms available</p>
+            {{end}}
+        </div>
+    </center>
 </body>
 </html>
