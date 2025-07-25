@@ -1,4 +1,4 @@
-package route
+package routes
 
 import (
 	"net/http"
@@ -17,6 +17,12 @@ type RoomStore struct {
 
 type Room struct {
 	RoomIndex int
+}
+
+type Message struct {
+	msgIndex int
+	content  string
+	sender   User
 }
 
 func NewRoomStore() *RoomStore {

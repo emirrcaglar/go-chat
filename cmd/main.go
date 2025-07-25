@@ -5,16 +5,14 @@ import (
 	"net/http"
 
 	routes "github.com/emirrcaglar/go-chat/routes"
-	"github.com/emirrcaglar/go-chat/server"
-	"golang.org/x/net/websocket"
 )
 
 func main() {
-	server := server.NewServer()
+	// server := server.NewServer()
 
 	mux := http.NewServeMux()
 
-	http.Handle("/ws", websocket.Handler(server.HandleWS))
+	// http.Handle("/ws", websocket.Handler(server.HandleWS))
 
 	routeHandler := routes.NewHandler()
 	routeHandler.RegisterRoutes(mux)

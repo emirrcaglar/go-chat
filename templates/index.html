@@ -7,7 +7,7 @@
 </head>
 <body>
     <center>
-        <h1>{{.PageTitle}}</h1>
+        <h1>Welcome, {{.Username}}</h1>
 
         <!-- Create Room button -->
         <div style="margin-top: 20px;">
@@ -17,6 +17,7 @@
         </div>
 
         <!-- Room buttons container -->
+        <br>
         <div>
             {{range $id, $room := .Rooms}}
             <a href="/rooms/{{$id}}">

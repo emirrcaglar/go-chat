@@ -1,4 +1,4 @@
-package route
+package routes
 
 import (
 	"html/template"
@@ -22,6 +22,8 @@ func (h *Handler) RegisterRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("GET /", h.index)
 	mux.HandleFunc("GET /rooms/{id}", h.viewRoomHandler)
 	mux.HandleFunc("GET /rooms/new", h.newRoomFormHandler)
+	mux.HandleFunc("GET /username", h.usernameHandler)
 
 	mux.HandleFunc("POST /create-room", h.createRoomHandler)
+	mux.HandleFunc("POST /create-user", h.createUserHandler)
 }
