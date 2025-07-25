@@ -3,6 +3,9 @@ package routes
 import (
 	"html/template"
 	"net/http"
+
+	"github.com/emirrcaglar/go-chat/server"
+	"golang.org/x/net/websocket"
 )
 
 type Handler struct {
@@ -18,7 +21,9 @@ func NewHandler() *Handler {
 	}
 }
 
-func (h *Handler) RegisterRoutes(mux *http.ServeMux) {
+func (h *Handler) RegisterRoutes(mux *http.ServeMux, s *server.Server) {
+	mux.Handle("GET /ws/room/", websocket.Handler(s.HandleWS))
+
 	mux.HandleFunc("GET /", h.index)
 	mux.HandleFunc("GET /rooms/{id}", h.viewRoomHandler)
 	mux.HandleFunc("GET /rooms/new", h.newRoomFormHandler)

@@ -6,6 +6,39 @@
     <title>Room {{.RoomIndex}}</title>
 </head>
 <body>
-   <p> This is room {{.RoomIndex}}</p> 
+    <center>
+    <table height="100%" width="100%" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td valign="top">
+        <!-- Your page content goes here -->
+        <p>This is the main content of your page.</p>
+        </td>
+    </tr>
+    <tr>
+        <td valign="bottom">
+            <div id="chat-messages"></div>
+            <input type="text" id="message-input" placeholder="type a message">
+            <button onclick="sendMessage()">Send</button>
+        <!-- Your text box at the bottom -->
+        </td>
+    </tr>
+    </table>
+    </center>
 </body>
 </html>
+
+<script>
+    const roomId = "{{.RoomIndex}}"
+    console.log('roomId: ', roomId)
+    const socket = new WebSocket("ws://localhost:3000/ws/room/" + roomId)
+    console.log('socket: ', socket.url)
+    const chatMessages = document.getElementById('chat-messages')
+    const messageInput = document.getElementById('message-input')
+
+    socket.onmessage = (event) => {console.log("received: ", event.data)};
+
+    function sendMessage() {
+        socket.send(messageInput.value)
+        messageInput.value = ""
+    }
+</script>
