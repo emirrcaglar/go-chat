@@ -1,14 +1,3 @@
-package main
-
-import (
-	"fmt"
-	"io"
-	"log"
-	"net/http"
-	"sync"
-
-	"golang.org/x/net/websocket"
-)
 
 type Server struct {
 	conns map[*websocket.Conn]bool
@@ -22,13 +11,13 @@ func NewServer() *Server {
 }
 
 func (s *Server) handleWS(ws *websocket.Conn) {
-	fmt.Printf("new connection: %v", ws.RemoteAddr())
+	fmt.Printf("new connection: %v\n", ws.RemoteAddr())
 
 	defer func() {
 		s.mutex.Lock()
 		delete(s.conns, ws)
 		s.mutex.Unlock()
-		log.Printf("connection closed: %v", ws.RemoteAddr())
+		log.Printf("connection closed: %v\n", ws.RemoteAddr())
 	}()
 
 	s.mutex.Lock()
@@ -65,20 +54,14 @@ func (s *Server) readLoop(ws *websocket.Conn) {
 func (s *Server) broadcast(msg []byte) {
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
+	fmt.Println("Starting broadcast...")
 
 	for conn := range s.conns {
 		if _, err := conn.Write(msg); err != nil {
 			log.Printf("Broadcast error to %v: %v", conn.RemoteAddr(), err)
 		}
+		log.Printf("broadcasting to connection: %v\n", conn.RemoteAddr())
+		log.Printf("the broadcasted message: %s", string(msg[:]))
 	}
-}
-
-func main() {
-	server := NewServer()
-
-	http.Handle("/ws", websocket.Handler(server.handleWS))
-	fmt.Println("Server starting on port 3000...")
-	if err := http.ListenAndServe(":3000", nil); err != nil {
-		fmt.Printf("Error starting server:%v", err)
-	}
+	fmt.Println("Finishing broadcast...")
 }
