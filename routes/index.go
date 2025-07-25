@@ -1,7 +1,6 @@
 package routes
 
 import (
-	"fmt"
 	"net/http"
 )
 
@@ -18,14 +17,7 @@ func (h *Handler) index(w http.ResponseWriter, r *http.Request) {
 		if uname, ok := username.(string); ok {
 			// username exists and is a string
 			username = uname
-			fmt.Println("Username:", uname)
-		} else {
-			// username exists but isn't a string
-			fmt.Println("Username is not a string")
 		}
-	} else {
-		// username doesn't exist in session
-		fmt.Println("No username in session")
 	}
 
 	data := IndexPageData{
