@@ -1,7 +1,6 @@
 package route
 
 import (
-	"html/template"
 	"net/http"
 )
 
@@ -14,7 +13,5 @@ func (h *Handler) index(w http.ResponseWriter, r *http.Request) {
 		PageTitle: "Chat",
 	}
 
-	tmpl, _ := template.ParseFiles("templates/index.html")
-
-	tmpl.Execute(w, data)
+	h.templates.ExecuteTemplate(w, "index.html", data)
 }
