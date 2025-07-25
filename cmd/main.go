@@ -11,7 +11,7 @@ import (
 func main() {
 	server := server.NewServer()
 
-	http.Handle("/ws", websocket.Handler(server.handleWS))
+	http.Handle("/ws", websocket.Handler(server.HandleWS))
 	fmt.Println("Server starting on port 3000...")
 	if err := http.ListenAndServe(":3000", nil); err != nil {
 		fmt.Printf("Error starting server:%v", err)

@@ -1,4 +1,4 @@
-module github.com/emirrcaglar/go-chat.git
+module github.com/emirrcaglar/go-chat
 
 go 1.24.4
 

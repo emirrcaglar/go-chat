@@ -1,3 +1,13 @@
+package server
+
+import (
+	"fmt"
+	"io"
+	"log"
+	"sync"
+
+	"golang.org/x/net/websocket"
+)
 
 type Server struct {
 	conns map[*websocket.Conn]bool
@@ -10,7 +20,7 @@ func NewServer() *Server {
 	}
 }
 
-func (s *Server) handleWS(ws *websocket.Conn) {
+func (s *Server) HandleWS(ws *websocket.Conn) {
 	fmt.Printf("new connection: %v\n", ws.RemoteAddr())
 
 	defer func() {
