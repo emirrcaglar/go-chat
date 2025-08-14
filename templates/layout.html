@@ -45,18 +45,3 @@
 </body>
 </html>
 {{end}}
-
-{{define "navbar"}}
-<div class="navbar">
-    <a href="/" {{if eq .CurrentPage "home"}}class="active"{{end}}>Home</a>
-    <a href="/rooms/new" {{if eq .CurrentPage "new-room"}}class="active"{{end}}>New Room</a>
-    <div class="right">
-        {{if .Username}}
-            <span style="color: #f2f2f2; padding: 14px 20px; float: left;">Welcome, {{.Username}}!</span>
-            <a href="/logout">Logout</a>
-        {{else}}
-            <a href="/username">Set Username</a>
-        {{end}}
-    </div>
-</div>
-{{end}}

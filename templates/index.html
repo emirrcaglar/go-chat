@@ -1,11 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{.PageTitle}}</title>
-</head>
-<body>
+{{define "index"}}
+{{template "layout" .}}
+{{end}}
+
+{{define "content"}}
     <center>
         <h1>Welcome, {{.Username}}</h1>
 
@@ -28,5 +25,4 @@
             {{end}}
         </div>
     </center>
-</body>
-</html>
+{{end}}

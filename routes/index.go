@@ -12,7 +12,7 @@ func (h *Handler) index(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Printf("error getting session: %v\n", err)
 	}
-	username := "unnamed" // default value
+	username := "unnamed"
 
 	if val, exists := session.Values["username"]; exists {
 		if uname, ok := val.(string); ok {
@@ -29,7 +29,7 @@ func (h *Handler) index(w http.ResponseWriter, r *http.Request) {
 		Username: username,
 	}
 
-	err = h.templates.ExecuteTemplate(w, "index.html", data)
+	err = h.templates.ExecuteTemplate(w, "index", data)
 	if err != nil {
 		http.Error(w, "Failed to render page: "+err.Error(), http.StatusInternalServerError)
 		return

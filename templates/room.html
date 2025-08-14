@@ -1,17 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Room {{.RoomIndex}}</title>
-</head>
-<body>
-    <div id="chat-window" style="border: 1px solid; height:300px; overflow-y: scroll; padding: 10px;">
-    </div>
-    <input type="text" id="message-input" placeholder="type a message">
-    <button onclick="sendMessage()">Send</button>
-</body>
-</html>
+{{define "room"}}
+{{template "layout" .}}
+{{end}}
+
+{{define "content"}}
+<div id="chat-window" style="border: 1px solid; height:300px; overflow-y: scroll; padding: 10px;">
+</div>
+<input type="text" id="message-input" placeholder="type a message">
+<button onclick="sendMessage()">Send</button>
 
 <script>
     const roomId = "{{.RoomIndex}}";
@@ -39,9 +34,9 @@
         if (content.trim() == '') return;
         
         const message = {
-            username: username,  // Now this variable exists
+            username: username,
             content: content,
-            roomID: roomId      // Fixed case - use roomId (or change to roomID consistently)
+            roomID: roomId
         }
         
         socket.send(JSON.stringify(message))
@@ -54,3 +49,4 @@
         }
     });
 </script>
+{{end}}

@@ -31,7 +31,15 @@ func NewRoom() *types.Room {
 }
 
 func (h *Handler) newRoomFormHandler(w http.ResponseWriter, r *http.Request) {
-	h.templates.ExecuteTemplate(w, "room.html", nil)
+	data := types.PageData{
+		PageTitle:   "New Room",
+		CurrentPage: "new-room",
+	}
+	err := h.templates.ExecuteTemplate(w, "room", data)
+	if err != nil {
+		http.Error(w, "Failed to render page: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
 }
 
 func (h *Handler) createRoomHandler(w http.ResponseWriter, r *http.Request) {
@@ -46,7 +54,7 @@ func (h *Handler) viewRoomHandler(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
 		http.Error(w, "Invalid room ID", http.StatusBadRequest)
-		return // Don't forget this return!
+		return
 	}
 
 	room, exists := h.roomStore.Rooms[id]
@@ -80,7 +88,7 @@ func (h *Handler) viewRoomHandler(w http.ResponseWriter, r *http.Request) {
 		Username: username,
 	}
 
-	err = h.templates.ExecuteTemplate(w, "room.html", data)
+	err = h.templates.ExecuteTemplate(w, "room", data)
 	if err != nil {
 		http.Error(w, "Failed to render page: "+err.Error(), http.StatusInternalServerError)
 		return
