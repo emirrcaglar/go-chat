@@ -29,7 +29,7 @@ func (h *Handler) index(w http.ResponseWriter, r *http.Request) {
 		Username: username,
 	}
 
-	err = h.templates.ExecuteTemplate(w, "index.html", data)
+	err = h.templates.ExecuteTemplate(w, "layout", data)
 	if err != nil {
 		http.Error(w, "Failed to render page: "+err.Error(), http.StatusInternalServerError)
 		return

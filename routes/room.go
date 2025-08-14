@@ -30,8 +30,20 @@ func NewRoom() *types.Room {
 	}
 }
 
+// newRoomFormHandler – now uses layout and passes PageData for navbar highlighting
 func (h *Handler) newRoomFormHandler(w http.ResponseWriter, r *http.Request) {
-	h.templates.ExecuteTemplate(w, "room.html", nil)
+	data := types.PageData{
+		PageTitle:   "Create New Room",
+		CurrentPage: "new-room", // highlight navbar link
+	}
+
+	// CHANGED: Execute the layout template instead of directly "room.html"
+	err := h.templates.ExecuteTemplate(w, "layout", struct {
+		types.PageData
+	}{data})
+	if err != nil {
+		http.Error(w, "Failed to render page: "+err.Error(), http.StatusInternalServerError)
+	}
 }
 
 func (h *Handler) createRoomHandler(w http.ResponseWriter, r *http.Request) {
@@ -46,7 +58,7 @@ func (h *Handler) viewRoomHandler(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
 		http.Error(w, "Invalid room ID", http.StatusBadRequest)
-		return // Don't forget this return!
+		return
 	}
 
 	room, exists := h.roomStore.Rooms[id]
@@ -63,26 +75,28 @@ func (h *Handler) viewRoomHandler(w http.ResponseWriter, r *http.Request) {
 
 	username := "unnamed"
 	if val, exists := session.Values["username"]; exists {
-		if uname, ok := val.(string); ok {
+		if uname, ok := val.(string); ok && uname != "" {
 			username = uname
 		}
 	}
 
-	if username == "" {
-		username = "unnamed"
-	}
-
+	// CHANGED: Create a combined data struct for layout
 	data := struct {
+		types.PageData
 		*types.Room
 		Username string
 	}{
+		PageData: types.PageData{
+			PageTitle:   "Room " + strconv.Itoa(room.RoomIndex),
+			CurrentPage: "", // no navbar highlight here
+		},
 		Room:     room,
 		Username: username,
 	}
 
-	err = h.templates.ExecuteTemplate(w, "room.html", data)
+	// CHANGED: Render layout, not room.html directly
+	err = h.templates.ExecuteTemplate(w, "layout", data)
 	if err != nil {
 		http.Error(w, "Failed to render page: "+err.Error(), http.StatusInternalServerError)
-		return
 	}
 }

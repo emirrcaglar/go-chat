@@ -32,4 +32,5 @@ func (h *Handler) RegisterRoutes(mux *http.ServeMux, s *server.Server) {
 
 	mux.HandleFunc("POST /create-room", h.createRoomHandler)
 	mux.HandleFunc("POST /create-user", h.createUserHandler)
+	mux.HandleFunc("POST /logout", h.logoutHandler)
 }

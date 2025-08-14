@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"sync"
 
+	"github.com/emirrcaglar/go-chat/types"
 	"github.com/gorilla/sessions"
 )
 
@@ -25,7 +26,15 @@ func NewUser(userName string) *User {
 }
 
 func (h *Handler) usernameHandler(w http.ResponseWriter, r *http.Request) {
-	h.templates.ExecuteTemplate(w, "user.html", nil)
+	data := types.IndexPageData{
+		PageData: types.PageData{
+			PageTitle:   "Set Username",
+			CurrentPage: "user",
+		},
+		Rooms:    h.roomStore.Rooms,
+		Username: "",
+	}
+	h.templates.ExecuteTemplate(w, "layout", data)
 }
 
 func (h *Handler) createUserHandler(w http.ResponseWriter, r *http.Request) {
