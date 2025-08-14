@@ -3,13 +3,9 @@ package routes
 import (
 	"log"
 	"net/http"
-)
 
-type IndexPageData struct {
-	PageTitle string
-	Rooms     map[int]*Room
-	Username  string
-}
+	"github.com/emirrcaglar/go-chat/types"
+)
 
 func (h *Handler) index(w http.ResponseWriter, r *http.Request) {
 	session, err := store.Get(r, "sess")
@@ -24,10 +20,13 @@ func (h *Handler) index(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	data := IndexPageData{
-		PageTitle: "Chat",
-		Rooms:     h.roomStore.rooms,
-		Username:  username,
+	data := types.IndexPageData{
+		PageData: types.PageData{
+			PageTitle:   "Chat",
+			CurrentPage: "index",
+		},
+		Rooms:    h.roomStore.Rooms,
+		Username: username,
 	}
 
 	err = h.templates.ExecuteTemplate(w, "index.html", data)

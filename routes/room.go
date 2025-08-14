@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"strconv"
 	"sync"
+
+	"github.com/emirrcaglar/go-chat/types"
 )
 
 var (
@@ -12,26 +14,18 @@ var (
 	roomMutex   sync.Mutex
 )
 
-type RoomStore struct {
-	rooms map[int]*Room
-}
-
-type Room struct {
-	RoomIndex int
-}
-
-func NewRoomStore() *RoomStore {
-	return &RoomStore{
-		rooms: make(map[int]*Room),
+func NewRoomStore() *types.RoomStore {
+	return &types.RoomStore{
+		Rooms: make(map[int]*types.Room),
 	}
 }
 
-func NewRoom() *Room {
+func NewRoom() *types.Room {
 	roomMutex.Lock()
 	defer roomMutex.Unlock()
 
 	roomCounter++
-	return &Room{
+	return &types.Room{
 		RoomIndex: roomCounter,
 	}
 }
@@ -42,7 +36,7 @@ func (h *Handler) newRoomFormHandler(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) createRoomHandler(w http.ResponseWriter, r *http.Request) {
 	room := NewRoom()
-	h.roomStore.rooms[room.RoomIndex] = room
+	h.roomStore.Rooms[room.RoomIndex] = room
 
 	http.Redirect(w, r, "/rooms/"+strconv.Itoa(room.RoomIndex), http.StatusSeeOther)
 }
@@ -55,7 +49,7 @@ func (h *Handler) viewRoomHandler(w http.ResponseWriter, r *http.Request) {
 		return // Don't forget this return!
 	}
 
-	room, exists := h.roomStore.rooms[id]
+	room, exists := h.roomStore.Rooms[id]
 	if !exists {
 		http.NotFound(w, r)
 		return
@@ -79,7 +73,7 @@ func (h *Handler) viewRoomHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := struct {
-		*Room
+		*types.Room
 		Username string
 	}{
 		Room:     room,

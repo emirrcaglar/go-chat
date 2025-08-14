@@ -5,11 +5,12 @@ import (
 	"net/http"
 
 	"github.com/emirrcaglar/go-chat/server"
+	"github.com/emirrcaglar/go-chat/types"
 	"golang.org/x/net/websocket"
 )
 
 type Handler struct {
-	roomStore *RoomStore
+	roomStore *types.RoomStore
 	templates *template.Template
 }
 
