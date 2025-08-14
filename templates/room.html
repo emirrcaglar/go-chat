@@ -12,6 +12,7 @@
     <button onclick="sendMessage()">Send</button>
 </body>
 </html>
+
 <script>
     const roomId = "{{.RoomIndex}}";
     const username = "{{.Username}}";
@@ -26,7 +27,7 @@
     
     socket.onmessage = function(event) {
         const message = JSON.parse(event.data);
-        const display_text = `${message.Username}: ${message.Context}`;
+        const display_text = `${message.username}: ${message.content}`;
         const messageElement = document.createElement('p');
         messageElement.textContent = display_text;
         chatWindow.appendChild(messageElement);

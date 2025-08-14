@@ -74,9 +74,12 @@ func (h *Handler) viewRoomHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// Create data structure that includes both room and username
+	if username == "" {
+		username = "unnamed"
+	}
+
 	data := struct {
-		*Room    // Embed the room struct
+		*Room
 		Username string
 	}{
 		Room:     room,
