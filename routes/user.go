@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"log"
 	"net/http"
 	"sync"
 
@@ -28,17 +29,23 @@ func (h *Handler) usernameHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) createUserHandler(w http.ResponseWriter, r *http.Request) {
-	session, _ := store.Get(r, "sess")
-
+	session, err := store.Get(r, "sess")
+	if err != nil {
+		log.Printf("error getting session: %v\n", err)
+	}
 	if r.Method == "POST" {
 		userName := r.FormValue("uname")
-
 		userMutex.Lock()
 		defer userMutex.Unlock()
 		session.Values["username"] = userName
-		session.Save(r, w)
+
+		// Check for save errors
+		if err := session.Save(r, w); err != nil {
+			log.Printf("Error saving session: %v", err)
+			http.Error(w, "Session error", http.StatusInternalServerError)
+			return
+		}
 
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 	}
-
 }

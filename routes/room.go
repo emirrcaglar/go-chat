@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"log"
 	"net/http"
 	"strconv"
 	"sync"
@@ -17,12 +18,6 @@ type RoomStore struct {
 
 type Room struct {
 	RoomIndex int
-}
-
-type Message struct {
-	msgIndex int
-	content  string
-	sender   User
 }
 
 func NewRoomStore() *RoomStore {
@@ -57,6 +52,7 @@ func (h *Handler) viewRoomHandler(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
 		http.Error(w, "Invalid room ID", http.StatusBadRequest)
+		return // Don't forget this return!
 	}
 
 	room, exists := h.roomStore.rooms[id]
@@ -65,5 +61,31 @@ func (h *Handler) viewRoomHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	h.templates.ExecuteTemplate(w, "room.html", room)
+	// Get username from session
+	session, err := store.Get(r, "sess")
+	if err != nil {
+		log.Printf("error getting session: %v\n", err)
+	}
+
+	username := "unnamed"
+	if val, exists := session.Values["username"]; exists {
+		if uname, ok := val.(string); ok {
+			username = uname
+		}
+	}
+
+	// Create data structure that includes both room and username
+	data := struct {
+		*Room    // Embed the room struct
+		Username string
+	}{
+		Room:     room,
+		Username: username,
+	}
+
+	err = h.templates.ExecuteTemplate(w, "room.html", data)
+	if err != nil {
+		http.Error(w, "Failed to render page: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
 }

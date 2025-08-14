@@ -1,10 +1,12 @@
 package server
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"log"
 	"sync"
+	"time"
 
 	"golang.org/x/net/websocket"
 )
@@ -49,15 +51,21 @@ func (s *Server) readLoop(ws *websocket.Conn) {
 			fmt.Printf("read error:%v", err)
 			continue
 		}
-		msg := buf[:n]
-		fmt.Println(string(msg))
+		var msg Message
 
-		if _, err := ws.Write([]byte("Echo: " + string(msg))); err != nil {
-			log.Printf("write error: %v", err)
-			break
+		if err := json.Unmarshal(buf[:n], &msg); err != nil {
+			log.Printf("JSON decode error: %v", err)
+			continue
 		}
 
-		s.broadcast([]byte(fmt.Sprintf("Broadcast: %s", msg)))
+		msg.Timestamp = time.Now()
+
+		msgBytes, err := json.Marshal(msg)
+		if err != nil {
+			log.Printf("JSON encode error: %v", err)
+			continue
+		}
+		s.broadcast(msgBytes)
 	}
 }
 
