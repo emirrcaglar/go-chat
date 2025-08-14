@@ -1,0 +1,62 @@
+{{define "layout"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.PageTitle}}</title>
+    <style>
+        .navbar {
+            background-color: #333;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        
+        .navbar a {
+            float: left;
+            display: block;
+            color: #f2f2f2;
+            text-align: center;
+            padding: 14px 20px;
+            text-decoration: none;
+        }
+        
+        .navbar a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+        
+        .navbar a.active {
+            background-color: #04AA6D;
+            color: white;
+        }
+        
+        .navbar .right {
+            float: right;
+        }
+    </style>
+</head>
+<body>
+    {{template "navbar" .}}
+    
+    <div class="content">
+        {{template "content" .}}
+    </div>
+</body>
+</html>
+{{end}}
+
+{{define "navbar"}}
+<div class="navbar">
+    <a href="/" {{if eq .CurrentPage "home"}}class="active"{{end}}>Home</a>
+    <a href="/rooms/new" {{if eq .CurrentPage "new-room"}}class="active"{{end}}>New Room</a>
+    <div class="right">
+        {{if .Username}}
+            <span style="color: #f2f2f2; padding: 14px 20px; float: left;">Welcome, {{.Username}}!</span>
+            <a href="/logout">Logout</a>
+        {{else}}
+            <a href="/username">Set Username</a>
+        {{end}}
+    </div>
+</div>
+{{end}}
