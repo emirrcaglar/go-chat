@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"sync"
 
-	"github.com/emirrcaglar/go-chat/types"
 	"github.com/gorilla/sessions"
 )
 
@@ -26,15 +25,7 @@ func NewUser(userName string) *User {
 }
 
 func (h *Handler) usernameHandler(w http.ResponseWriter, r *http.Request) {
-	data := types.PageData{
-		PageTitle:   "Set Username",
-		CurrentPage: "username",
-	}
-	err := h.templates.ExecuteTemplate(w, "user", data)
-	if err != nil {
-		http.Error(w, "Failed to render page: "+err.Error(), http.StatusInternalServerError)
-		return
-	}
+	h.templates.ExecuteTemplate(w, "user.html", nil)
 }
 
 func (h *Handler) createUserHandler(w http.ResponseWriter, r *http.Request) {
@@ -54,6 +45,7 @@ func (h *Handler) createUserHandler(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Session error", http.StatusInternalServerError)
 			return
 		}
+
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 	}
 }
