@@ -6,7 +6,9 @@ import (
 	"io"
 	"log"
 	"strconv"
+	"strings"
 	"sync"
+	"time"
 
 	"github.com/emirrcaglar/go-chat/types"
 	"golang.org/x/net/websocket"
@@ -14,6 +16,7 @@ import (
 
 type Server struct {
 	conns     map[*websocket.Conn]bool
+	rooms     map[int]map[*websocket.Conn]bool
 	roomStore *types.RoomStore
 	mutex     sync.RWMutex
 }
@@ -21,6 +24,7 @@ type Server struct {
 func NewServer(roomStore *types.RoomStore) *Server {
 	return &Server{
 		conns:     make(map[*websocket.Conn]bool),
+		rooms:     make(map[int]map[*websocket.Conn]bool),
 		roomStore: roomStore,
 	}
 }
@@ -28,22 +32,35 @@ func NewServer(roomStore *types.RoomStore) *Server {
 func (s *Server) HandleWS(ws *websocket.Conn) {
 	fmt.Printf("new connection: %v\n", ws.RemoteAddr())
 
+	roomIDStr := strings.TrimPrefix(ws.Request().URL.Path, "/ws/room/")
+	roomID, err := strconv.Atoi(roomIDStr)
+	if err != nil {
+		log.Printf("Invalid room ID: %s", roomIDStr)
+		return
+	}
+
+	// create connection for the room
+	s.mutex.Lock()
+	if _, ok := s.rooms[roomID]; !ok {
+		s.rooms[roomID] = make(map[*websocket.Conn]bool)
+	}
+	s.rooms[roomID][ws] = true
+	s.mutex.Unlock()
+
 	defer func() {
 		s.mutex.Lock()
-		delete(s.conns, ws)
+		delete(s.rooms[roomID], ws)
+		if len(s.rooms[roomID]) == 0 {
+			delete(s.rooms, roomID)
+		}
 		s.mutex.Unlock()
 		log.Printf("connection closed: %v\n", ws.RemoteAddr())
 	}()
-
-	s.mutex.Lock()
-	s.conns[ws] = true
-	s.mutex.Unlock()
 
 	s.readLoop(ws)
 }
 
 func (s *Server) readLoop(ws *websocket.Conn) {
-	// slice of bytes with size of 1024
 	buf := make([]byte, 1024)
 
 	for {
@@ -70,6 +87,8 @@ func (s *Server) readLoop(ws *websocket.Conn) {
 		}
 
 		if room, exists := s.roomStore.Rooms[id]; exists {
+			// Set the timestamp on the server side
+			msg.Timestamp = time.Now()
 			room.AddMessage(msg.Username, msg.Content)
 			log.Printf("DEBUG - Message history: %v", room.MessageHistory)
 		} else {
@@ -82,17 +101,19 @@ func (s *Server) readLoop(ws *websocket.Conn) {
 			log.Printf("JSON encode error: %v", err)
 			continue
 		}
-		s.broadcast(msgBytes)
+		s.broadcast(id, msgBytes)
 	}
 }
 
-func (s *Server) broadcast(msg []byte) {
+func (s *Server) broadcast(roomID int, msg []byte) {
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
 
-	for conn := range s.conns {
-		if _, err := conn.Write(msg); err != nil {
-			log.Printf("Broadcast error to %v: %v", conn.RemoteAddr(), err)
+	if conns, ok := s.rooms[roomID]; ok {
+		for conn := range conns {
+			if _, err := conn.Write(msg); err != nil {
+				log.Printf("Broadcast error to %v: %v", conn.RemoteAddr(), err)
+			}
 		}
 	}
 }
