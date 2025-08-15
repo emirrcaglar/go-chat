@@ -2,25 +2,28 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
+	"strconv"
 
+	"github.com/emirrcaglar/go-chat/config"
 	routes "github.com/emirrcaglar/go-chat/routes"
 	"github.com/emirrcaglar/go-chat/server"
 )
 
 func main() {
-	// server := server.NewServer()
+	cfg, err := config.LoadConfig()
+	if err != nil {
+		log.Fatalf("Failed to load config: %v", err)
+	}
 
 	mux := http.NewServeMux()
 	roomStore := routes.NewRoomStore()
 	s := server.NewServer(roomStore)
-	// http.Handle("/ws", websocket.Handler(server.HandleWS))
 
 	routeHandler := routes.NewHandler(roomStore)
 	routeHandler.RegisterRoutes(mux, s)
 
-	fmt.Println("Server starting on port 3000...")
-	if err := http.ListenAndServe(":3000", mux); err != nil {
-		fmt.Printf("Error starting server:%v", err)
-	}
-}
+	portStr := strconv.Itoa(cfg.Server.Port)
+	fmt.Printf("Server starting on port %s...\n", portStr)
+	if err := http.ListenAndServe(":

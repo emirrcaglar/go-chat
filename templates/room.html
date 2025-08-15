@@ -14,7 +14,16 @@
     console.log('roomID: ', roomID);
     console.log('username: ', username);
     
-    const socket = new WebSocket("ws://localhost:3000/ws/room/" + roomID);
+    const loc = window.location
+    let ws_uri;
+    if (loc.protocol == "https:"){
+        ws_uri = "wss:";
+    } else {
+        ws_uri = "ws:";
+    }
+    ws_uri += "//" + loc.host + "/ws/room/" + roomID;
+    const socket = new WebSocket(ws_uri);
+
     console.log('socket: ', socket.url);
     
     const chatWindow = document.getElementById('chat-window');
