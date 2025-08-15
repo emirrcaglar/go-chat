@@ -73,7 +73,7 @@ func (h *Handler) viewRoomHandler(w http.ResponseWriter, r *http.Request) {
 		log.Printf("error getting session: %v\n", err)
 	}
 
-	username := "unnamed"
+	var username string
 	if val, exists := session.Values["username"]; exists {
 		if uname, ok := val.(string); ok && uname != "" {
 			username = uname

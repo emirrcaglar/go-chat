@@ -12,8 +12,8 @@ func (h *Handler) index(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Printf("error getting session: %v\n", err)
 	}
-	username := "unnamed" // default value
 
+	var username string
 	if val, exists := session.Values["username"]; exists {
 		if uname, ok := val.(string); ok {
 			username = uname

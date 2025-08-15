@@ -26,13 +26,25 @@ func NewUser(userName string) *User {
 }
 
 func (h *Handler) usernameHandler(w http.ResponseWriter, r *http.Request) {
+	session, err := store.Get(r, "sess")
+	if err != nil {
+		log.Printf("error getting session: %v\n", err)
+	}
+
+	var username string
+	if val, ok := session.Values["username"]; ok {
+		if str, ok := val.(string); ok && str != "" {
+			username = str
+		}
+	}
+
 	data := types.IndexPageData{
 		PageData: types.PageData{
 			PageTitle:   "Set Username",
 			CurrentPage: "user",
 		},
 		Rooms:    h.roomStore.Rooms,
-		Username: "",
+		Username: username,
 	}
 	h.templates.ExecuteTemplate(w, "layout", data)
 }
