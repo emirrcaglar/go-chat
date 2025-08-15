@@ -10,15 +10,18 @@ import (
 )
 
 type Handler struct {
-	roomStore *types.RoomStore
-	templates *template.Template
+	roomStore     *types.RoomStore
+	indexTemplate *template.Template
+	userTemplate  *template.Template
+	roomTemplate  *template.Template
 }
 
 func NewHandler() *Handler {
-	tmpl := template.Must(template.ParseGlob("templates/*.html"))
 	return &Handler{
-		roomStore: NewRoomStore(),
-		templates: tmpl,
+		roomStore:     NewRoomStore(),
+		indexTemplate: template.Must(template.ParseFiles("templates/layout.html", "templates/index.html")),
+		userTemplate:  template.Must(template.ParseFiles("templates/layout.html", "templates/user.html")),
+		roomTemplate:  template.Must(template.ParseFiles("templates/layout.html", "templates/room.html")),
 	}
 }
 

@@ -40,7 +40,9 @@
     {{template "navbar" .}}
     
     <div class="content">
-        {{block "content" .}}{{end}}
+        {{block "content" .}}
+        <p>No content found</p>
+        {{end}}
     </div>
 </body>
 </html>
@@ -48,15 +50,14 @@
 
 {{define "navbar"}}
 <div class="navbar">
-    <a href="/" {{if eq .CurrentPage "home"}}class="active"{{end}}>Home</a>
-    <a href="/rooms/new" {{if eq .CurrentPage "new-room"}}class="active"{{end}}>New Room</a>
+    <a href="/" {{if eq .CurrentPage "index"}}class="active"{{end}}>Home</a>
     <div class="right">
-    {{if and .Username (ne .Username "")}}
-        <span style="color: #f2f2f2; padding: 14px 20px; float: left;">Welcome, {{.Username}}!</span>
-        <a href="/logout">Logout</a>
-    {{else}}
-        <a href="/username">Set Username</a>
-    {{end}}
+        {{if and .Username (ne .Username "")}}
+            <span style="color: #f2f2f2; padding: 14px 20px; float: left;">Welcome, {{.Username}}!</span>
+            <a href="/logout">Logout</a>
+        {{else}}
+            <a href="/username">Set Username</a>
+        {{end}}
     </div>
 </div>
 {{end}}

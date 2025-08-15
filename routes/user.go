@@ -46,7 +46,7 @@ func (h *Handler) usernameHandler(w http.ResponseWriter, r *http.Request) {
 		Rooms:    h.roomStore.Rooms,
 		Username: username,
 	}
-	h.templates.ExecuteTemplate(w, "layout", data)
+	h.userTemplate.ExecuteTemplate(w, "user.html", data)
 }
 
 func (h *Handler) createUserHandler(w http.ResponseWriter, r *http.Request) {

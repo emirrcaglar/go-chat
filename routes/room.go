@@ -37,8 +37,7 @@ func (h *Handler) newRoomFormHandler(w http.ResponseWriter, r *http.Request) {
 		CurrentPage: "new-room", // highlight navbar link
 	}
 
-	// CHANGED: Execute the layout template instead of directly "room.html"
-	err := h.templates.ExecuteTemplate(w, "layout", struct {
+	err := h.roomTemplate.ExecuteTemplate(w, "room.html", struct {
 		types.PageData
 	}{data})
 	if err != nil {
@@ -94,8 +93,7 @@ func (h *Handler) viewRoomHandler(w http.ResponseWriter, r *http.Request) {
 		Username: username,
 	}
 
-	// CHANGED: Render layout, not room.html directly
-	err = h.templates.ExecuteTemplate(w, "layout", data)
+	err = h.roomTemplate.ExecuteTemplate(w, "room.html", data)
 	if err != nil {
 		http.Error(w, "Failed to render page: "+err.Error(), http.StatusInternalServerError)
 	}

@@ -1,32 +1,21 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{.PageTitle}}</title>
-</head>
-<body>
-    <center>
-        <h1>Welcome, {{.Username}}</h1>
-
-        <!-- Create Room button -->
-        <div style="margin-top: 20px;">
-            <form action="/create-room" method="POST">
-                <button type="submit">Create New Room</button>
-            </form>
-        </div>
-
-        <!-- Room buttons container -->
-        <br>
-        <div>
-            {{range $id, $room := .Rooms}}
-            <a href="/rooms/{{$id}}">
-                <button>Room {{$room.RoomIndex}}</button>
-            </a>
-            {{else}}
-            <p>No rooms available</p>
-            {{end}}
-        </div>
-    </center>
-</body>
-</html>
+{{template "layout" .}}
+{{define "content"}}
+    <h1>Welcome, {{if .Username}}{{.Username}}{{else}}Guest{{end}}</h1>
+    
+    <div style="margin-top: 20px;">
+        <form action="/create-room" method="POST">
+            <button type="submit">Create New Room</button>
+        </form>
+    </div>
+    
+    <br>
+    <div>
+        {{range $id, $room := .Rooms}}
+        <a href="/rooms/{{$id}}">
+            <button>Room {{$room.RoomIndex}}</button>
+        </a>
+        {{else}}
+        <p>No rooms available</p>
+        {{end}}
+    </div>
+{{end}}
