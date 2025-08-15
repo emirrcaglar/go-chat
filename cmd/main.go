@@ -26,4 +26,7 @@ func main() {
 
 	portStr := strconv.Itoa(cfg.Server.Port)
 	fmt.Printf("Server starting on port %s...\n", portStr)
-	if err := http.ListenAndServe(":
+	if err := http.ListenAndServe(":"+portStr, mux); err != nil {
+		fmt.Printf("Error starting server:%v", err)
+	}
+}
