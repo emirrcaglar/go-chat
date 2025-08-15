@@ -8,6 +8,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/emirrcaglar/go-chat/types"
 	"golang.org/x/net/websocket"
 )
 
@@ -51,7 +52,7 @@ func (s *Server) readLoop(ws *websocket.Conn) {
 			fmt.Printf("read error:%v", err)
 			continue
 		}
-		var msg Message
+		var msg types.Message
 
 		if err := json.Unmarshal(buf[:n], &msg); err != nil {
 			log.Printf("JSON decode error: %v", err)
@@ -72,14 +73,10 @@ func (s *Server) readLoop(ws *websocket.Conn) {
 func (s *Server) broadcast(msg []byte) {
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
-	fmt.Println("Starting broadcast...")
 
 	for conn := range s.conns {
 		if _, err := conn.Write(msg); err != nil {
 			log.Printf("Broadcast error to %v: %v", conn.RemoteAddr(), err)
 		}
-		log.Printf("broadcasting to connection: %v\n", conn.RemoteAddr())
-		log.Printf("the broadcasted message: %s", string(msg[:]))
 	}
-	fmt.Println("Finishing broadcast...")
 }

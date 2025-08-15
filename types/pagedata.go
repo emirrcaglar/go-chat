@@ -13,5 +13,7 @@ type IndexPageData struct {
 
 type RoomPageData struct {
 	PageData
-	RoomIndex int
+	Username       string
+	Room           *Room
+	MessageHistory map[string]string
 }

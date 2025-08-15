@@ -5,5 +5,6 @@ type RoomStore struct {
 }
 
 type Room struct {
-	RoomIndex int
+	RoomIndex      int
+	MessageHistory map[string]string
 }

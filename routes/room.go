@@ -78,19 +78,32 @@ func (h *Handler) viewRoomHandler(w http.ResponseWriter, r *http.Request) {
 			username = uname
 		}
 	}
+	if username == "" {
+		username = "unnamed"
+	}
 
 	// CHANGED: Create a combined data struct for layout
-	data := struct {
-		types.PageData
-		*types.Room
-		Username string
-	}{
+	// data := struct {
+	// 	types.PageData
+	// 	*types.Room
+	// 	Username string
+	// }{
+	// 	PageData: types.PageData{
+	// 		PageTitle:   "Room " + strconv.Itoa(room.RoomIndex),
+	// 		CurrentPage: "", // no navbar highlight here
+	// 	},
+	// 	Room:     room,
+	// 	Username: username,
+	// }
+
+	data := types.RoomPageData{
 		PageData: types.PageData{
 			PageTitle:   "Room " + strconv.Itoa(room.RoomIndex),
-			CurrentPage: "", // no navbar highlight here
+			CurrentPage: "",
 		},
-		Room:     room,
-		Username: username,
+		Username:       username,
+		Room:           room,
+		MessageHistory: room.MessageHistory,
 	}
 
 	err = h.roomTemplate.ExecuteTemplate(w, "room.html", data)
