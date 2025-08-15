@@ -11,7 +11,7 @@
     <br>
     <div>
         {{range $id, $room := .Rooms}}
-        <a href="/rooms/{{$id}}">
+        <a href="/rooms/{{$id}}" class="room-button-link">
             <button>Room {{$room.RoomIndex}}</button>
         </a>
         {{else}}
