@@ -15,5 +15,5 @@ type RoomPageData struct {
 	PageData
 	Username       string
 	Room           *Room
-	MessageHistory map[string]string
+	MessageHistory []Message
 }

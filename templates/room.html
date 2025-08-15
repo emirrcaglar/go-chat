@@ -1,17 +1,20 @@
 {{template "layout" .}}
 {{define "content"}}
     <div id="chat-window" style="border: 1px solid; height:300px; overflow-y: scroll; padding: 10px;">
+        {{range .MessageHistory}}
+            <p>{{.Username}}: {{.Content}} <small>{{.Timestamp.Format "15:04"}}</small></p>
+        {{end}}
     </div>
     <input type="text" id="message-input" placeholder="type a message">
     <button onclick="sendMessage()">Send</button>
 
 <script>
-    const roomId = "{{.Room.RoomIndex}}";
+    const roomID = "{{.Room.RoomIndex}}";
     const username = "{{.Username}}";
-    console.log('roomId: ', roomId);
+    console.log('roomID: ', roomID);
     console.log('username: ', username);
     
-    const socket = new WebSocket("ws://localhost:3000/ws/room/" + roomId);
+    const socket = new WebSocket("ws://localhost:3000/ws/room/" + roomID);
     console.log('socket: ', socket.url);
     
     const chatWindow = document.getElementById('chat-window');
@@ -31,9 +34,9 @@
         if (content.trim() == '') return;
         
         const message = {
-            username: username,  // Now this variable exists
+            username: username,
             content: content,
-            roomID: roomId      // Fixed case - use roomId (or change to roomID consistently)
+            roomID: roomID
         }
         
         socket.send(JSON.stringify(message))

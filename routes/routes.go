@@ -16,9 +16,9 @@ type Handler struct {
 	roomTemplate  *template.Template
 }
 
-func NewHandler() *Handler {
+func NewHandler(roomStore *types.RoomStore) *Handler {
 	return &Handler{
-		roomStore:     NewRoomStore(),
+		roomStore:     roomStore,
 		indexTemplate: template.Must(template.ParseFiles("templates/layout.html", "templates/index.html")),
 		userTemplate:  template.Must(template.ParseFiles("templates/layout.html", "templates/user.html")),
 		roomTemplate:  template.Must(template.ParseFiles("templates/layout.html", "templates/room.html")),

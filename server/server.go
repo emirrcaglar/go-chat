@@ -5,21 +5,23 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"strconv"
 	"sync"
-	"time"
 
 	"github.com/emirrcaglar/go-chat/types"
 	"golang.org/x/net/websocket"
 )
 
 type Server struct {
-	conns map[*websocket.Conn]bool
-	mutex sync.RWMutex
+	conns     map[*websocket.Conn]bool
+	roomStore *types.RoomStore
+	mutex     sync.RWMutex
 }
 
-func NewServer() *Server {
+func NewServer(roomStore *types.RoomStore) *Server {
 	return &Server{
-		conns: make(map[*websocket.Conn]bool),
+		conns:     make(map[*websocket.Conn]bool),
+		roomStore: roomStore,
 	}
 }
 
@@ -41,7 +43,8 @@ func (s *Server) HandleWS(ws *websocket.Conn) {
 }
 
 func (s *Server) readLoop(ws *websocket.Conn) {
-	buf := make([]byte, 1024) // slice of bytes with size of 1024
+	// slice of bytes with size of 1024
+	buf := make([]byte, 1024)
 
 	for {
 		n, err := ws.Read(buf)
@@ -52,6 +55,7 @@ func (s *Server) readLoop(ws *websocket.Conn) {
 			fmt.Printf("read error:%v", err)
 			continue
 		}
+
 		var msg types.Message
 
 		if err := json.Unmarshal(buf[:n], &msg); err != nil {
@@ -59,7 +63,19 @@ func (s *Server) readLoop(ws *websocket.Conn) {
 			continue
 		}
 
-		msg.Timestamp = time.Now()
+		id, err := strconv.Atoi(msg.RoomID)
+		if err != nil {
+			log.Printf("Invalid room ID: %s", msg.RoomID)
+			return
+		}
+
+		if room, exists := s.roomStore.Rooms[id]; exists {
+			room.AddMessage(msg.Username, msg.Content)
+			log.Printf("DEBUG - Message history: %v", room.MessageHistory)
+		} else {
+			log.Printf("DEBUG - Message history: %v", room.MessageHistory)
+			log.Printf("Room %d not found\n", id)
+		}
 
 		msgBytes, err := json.Marshal(msg)
 		if err != nil {
