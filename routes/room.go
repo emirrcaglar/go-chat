@@ -79,7 +79,7 @@ func (h *Handler) viewRoomHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	if username == "" {
-		username = "unnamed"
+		username = "Guest"
 	}
 
 	// CHANGED: Create a combined data struct for layout
