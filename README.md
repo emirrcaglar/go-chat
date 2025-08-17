@@ -5,14 +5,15 @@
 This is a real-time chat application built with Go. It allows users to create and join chat rooms to communicate in real-time.
 
 The application follows a standard Go web application architecture:
+
 - **Backend:** Written in Go, using the standard `net/http` library for the web server and `golang.org/x/net/websocket` for real-time communication.
 - **Frontend:** Server-side rendered using Go's `html/template` package.
 - **Dependencies:** It uses `github.com/gorilla/sessions` for managing user sessions.
 - **Structure:** The code is organized into several packages:
-    - `cmd`: Contains the main application entry point.
-    - `routes`: Defines the HTTP routes and handlers.
-    - `server`: Manages the WebSocket server and connections.
-    - `types`: Defines the data structures used throughout the application.
+  - `cmd`: Contains the main application entry point.
+  - `routes`: Defines the HTTP routes and handlers.
+  - `server`: Manages the WebSocket server and connections.
+  - `types`: Defines the data structures used throughout the application.
 
 ## Building and Running
 
