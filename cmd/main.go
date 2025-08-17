@@ -25,7 +25,9 @@ func main() {
 	routeHandler.RegisterRoutes(mux, s)
 
 	portStr := strconv.Itoa(cfg.Server.Port)
+	addr := "http://localhost:" + portStr + "/"
 	fmt.Printf("Server starting on port %s...\n", portStr)
+	fmt.Printf("Address: %s", addr)
 	if err := http.ListenAndServe(":"+portStr, mux); err != nil {
 		fmt.Printf("Error starting server:%v", err)
 	}
