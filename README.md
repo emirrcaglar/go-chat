@@ -24,6 +24,18 @@ To run the application, use the following command from the project root:
 go run cmd/main.go
 ```
 
+Or use Makefile:
+
+```sh
+make run
+```
+
+Or use air if you want live reload:
+
+```sh
+air
+```
+
 The server will start on `http://localhost:3000`.
 
 ### Development with Live Reload

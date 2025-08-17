@@ -4,7 +4,7 @@ go 1.24.4
 
 require golang.org/x/net v0.42.0
 
-require gopkg.in/yaml.v3 v3.0.1 // indirect
+require gopkg.in/yaml.v3 v3.0.1
 
 require (
 	github.com/gorilla/securecookie v1.1.2 // indirect
